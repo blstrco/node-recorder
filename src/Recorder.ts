@@ -56,7 +56,7 @@ enum Methods {
   OPTIONS = "OPTIONS",
   PATCH = "PATCH",
   POST = "POST",
-  PUT = "PUT"
+  PUT = "PUT",
 }
 
 // A more relaxed version of http.ReuestOptions
@@ -93,13 +93,13 @@ interface InterceptedRequest {
 }
 
 const explorer = cosmiconfig("recorder", {
-  searchPlaces: ["recorder.config.js"]
+  searchPlaces: ["recorder.config.js"],
 });
 
 const {
   NODE_ENV,
   // Default to REPLAY in CI, RECORD otherwise
-  RECORDER = NODE_ENV === "test" ? Mode.REPLAY : Mode.RECORD
+  RECORDER = NODE_ENV === "test" ? Mode.REPLAY : Mode.RECORD,
 } = process.env;
 
 // ! nock overrides http methods upon require. Restore to normal before starting.
@@ -113,7 +113,7 @@ export class Recorder {
 
   private config: Config = {
     mode: RECORDER as Mode,
-    recordingsPath: path.resolve(process.cwd(), "__recordings__")
+    recordingsPath: path.resolve(process.cwd(), "__recordings__"),
   };
 
   constructor() {
@@ -186,7 +186,7 @@ export class Recorder {
     const relativePath = recordingPath.replace(process.cwd(), "").slice(1);
 
     return terminalLink(relativePath, `vscode://file/${recordingPath}`, {
-      fallback: (text: string) => text
+      fallback: (text: string) => text,
     });
   }
 
@@ -265,7 +265,7 @@ export class Recorder {
       chalk
         .keyword("orange")
         .bold.inverse(modeEnum.padStart((23 + modeEnum.length) / 2).padEnd(23)),
-      "\n"
+      "\n",
     ].join("\n");
   }
 
@@ -281,7 +281,7 @@ export class Recorder {
     const recordingPath = this.hasRecording(interceptedRequest);
     const href = this.getHrefFromOptions(options);
     const link = terminalLink(href, href, {
-      fallback: (text: string) => text
+      fallback: (text: string) => text,
     });
 
     if (this.config.ignore) {
@@ -359,7 +359,7 @@ export class Recorder {
     const result = identify(
       {
         ...request,
-        url
+        url,
       },
       response
     );
@@ -406,7 +406,7 @@ export class Recorder {
       : this.httpRequest)({
       ...options,
       method,
-      headers
+      headers,
     });
 
     const responsePromise = new Promise((resolve, reject) => {
@@ -433,10 +433,7 @@ export class Recorder {
         const { headers } = response;
 
         // GitHub sends compressed, chunked payloads
-        if (
-          headers["content-encoding"] === "gzip" &&
-          headers["transfer-encoding"] === "chunked"
-        ) {
+        if (headers["content-encoding"] === "gzip") {
           const decoded = Buffer.concat(chunks);
           const unzipped = zlib.gunzipSync(decoded).toString("utf8");
 
@@ -477,7 +474,7 @@ export class Recorder {
     return {
       statusCode: response.statusCode as number,
       headers: response.headers,
-      body: responseBody
+      body: responseBody,
     };
   }
 
@@ -502,7 +499,7 @@ export class Recorder {
 
     const recording = {
       request: { method, href, headers, body, url },
-      response
+      response,
     };
 
     const { normalizer } = this.config;
@@ -612,7 +609,7 @@ export class Recorder {
             method,
             options,
             req,
-            respond: respond as nock.ReplyCallback
+            respond: respond as nock.ReplyCallback,
           };
 
           recorder.handleRequest(interceptedRequest);
